@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FindMyFaculty · SCSVMV University</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+<style>
+/* ======================== ROOT & THEMING ======================== */
+:root {
+  --bg: #f3f6fa;
+  --bg-card: #ffffff;
+  --bg-card-alt: #f8fafc;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --text-dim: #94a3b8;
+  --border: #e2e8f0;
+  --border-light: #f1f5f9;
+  
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-light: #eff6ff;
+  --primary-text: #1d4ed8;
+  
+  --role-student: #2563eb;
+  --role-student-bg: #eff6ff;
+  --role-faculty: #059669;
+  --role-faculty-bg: #ecfdf5;
+  --role-admin: #7c3aed;
+  --role-admin-bg: #f5f3ff;
+  
+  /* Status Colors */
+  --st-avail: #10b981;
+  --st-avail-bg: #d1fae5;
+  --st-avail-text: #065f46;
+  
+  --st-teach: #3b82f6;
+  --st-teach-bg: #dbeafe;
+  --st-teach-text: #1e40af;
+  
+  --st-meet: #f59e0b;
+  --st-meet-bg: #fef3c7;
+  --st-meet-text: #92400e;
+  
+  --st-duty: #8b5cf6;
+  --st-duty-bg: #ede9fe;
+  --st-duty-text: #5b21b6;
+  
+  --st-unavail: #ef4444;
+  --st-unavail-bg: #fee2e2;
+  --st-unavail-text: #991b1b;
+  
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+  --shadow-lg: 0 10px 25px -5px rgba(0,0,0,0.08), 0 8px 10px -6px rgba(0,0,0,0.04);
+  --shadow-xl: 0 20px 30px -10px rgba(0,0,0,0.12);
+  
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+[data-theme="dark"] {
+  --bg: #090d16;
+  --bg-card: #111827;
+  --bg-card-alt: #1e293b;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  --border: #243248;
+  --border-light: #1b263b;
+  
+  --primary: #3b82f6;
+  --primary-hover: #60a5fa;
+  --primary-light: #172554;
+  --primary-text: #93c5fd;
+  
+  --role-student-bg: #172554;
+  --role-faculty-bg: #064e3b;
+  --role-admin-bg: #2e1065;
+  
+  --st-avail-bg: #064e3b;
+  --st-avail-text: #6ee7b7;
+  --st-teach-bg: #1e3a8a;
+  --st-teach-text: #93c5fd;
+  --st-meet-bg: #78350f;
+  --st-meet-text: #fde68a;
+  --st-duty-bg: #4c1d95;
+  --st-duty-text: #c4b5fd;
+  --st-unavail-bg: #7f1d1d;
+  --st-unavail-text: #fca5a5;
+  
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.4);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.5);
+  --shadow-lg: 0 10px 25px -5px rgba(0,0,0,0.6);
+  --shadow-xl: 0 20px 30px -10px rgba(0,0,0,0.8);
+}
+
+/* ======================== BASE RESETS ======================== */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { min-height: 100%; font-family: var(--font); color: var(--text-main); background: var(--bg); transition: background-color 0.2s ease, color 0.2s ease; -webkit-font-smoothing: antialiased; }
+button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+input, select, textarea { font: inherit; color: inherit; }
+a { color: var(--primary); text-decoration: none; }
+.hide { display: none !important; }
+
+/* ======================== BUTTONS & INPUTS ======================== */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 10px 18px; border-radius: var(--radius-sm); font-weight: 600; font-size: 14px;
+  transition: all 0.15s ease; border: 1px solid transparent; user-select: none;
+}
+.btn:active { transform: scale(0.98); }
+.btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+.btn-primary { background: var(--primary); color: #ffffff; box-shadow: 0 2px 8px rgba(37,99,235,0.3); }
+.btn-primary:hover:not(:disabled) { background: var(--primary-hover); }
+.btn-secondary { background: var(--bg-card); color: var(--text-main); border-color: var(--border); }
+.btn-secondary:hover:not(:disabled) { background: var(--bg-card-alt); border-color: var(--text-dim); }
+.btn-outline { border-color: var(--primary); color: var(--primary); background: transparent; }
+.btn-outline:hover:not(:disabled) { background: var(--primary-light); }
+.btn-student { background: var(--role-student); color: #fff; box-shadow: 0 4px 12px rgba(37,99,235,0.25); }
+.btn-student:hover { background: #1d4ed8; }
+.btn-faculty { background: var(--role-faculty); color: #fff; box-shadow: 0 4px 12px rgba(5,150,105,0.25); }
+.btn-faculty:hover { background: #047857; }
+.btn-admin { background: var(--role-admin); color: #fff; box-shadow: 0 4px 12px rgba(124,58,237,0.25); }
+.btn-admin:hover { background: #6d28d9; }
+.btn-sm { padding: 6px 12px; font-size: 12.5px; border-radius: 6px; }
+.btn-lg { padding: 14px 24px; font-size: 16px; border-radius: var(--radius-md); }
+.btn-block { width: 100%; }
+
+.input-group { margin-bottom: 16px; }
+.input-label { display: block; font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; }
+.input-field {
+  width: 100%; padding: 11px 14px; background: var(--bg-card); border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); font-size: 14.5px; color: var(--text-main); transition: border-color 0.15s;
+}
+.input-field:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.12); }
+
+/* ======================== BADGES & STATUSES ======================== */
+.badge {
+  display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px;
+  border-radius: 9999px; font-size: 12px; font-weight: 600; text-transform: capitalize;
+}
+.dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.badge-available, .status-AVAILABLE { background: var(--st-avail-bg); color: var(--st-avail-text); }
+.badge-available .dot, .status-AVAILABLE .dot { background: var(--st-avail); box-shadow: 0 0 0 2px rgba(16,185,129,0.3); }
+
+.badge-teaching, .status-TEACHING { background: var(--st-teach-bg); color: var(--st-teach-text); }
+.badge-teaching .dot, .status-TEACHING .dot { background: var(--st-teach); }
+
+.badge-meeting, .status-MEETING { background: var(--st-meet-bg); color: var(--st-meet-text); }
+.badge-meeting .dot, .status-MEETING .dot { background: var(--st-meet); }
+
+.badge-duty, .status-ON_DUTY { background: var(--st-duty-bg); color: var(--st-duty-text); }
+.badge-duty .dot, .status-ON_DUTY .dot { background: var(--st-duty); }
+
+.badge-unavailable, .status-UNAVAILABLE, .status-ABSENT { background: var(--st-unavail-bg); color: var(--st-unavail-text); }
+.badge-unavailable .dot, .status-UNAVAILABLE .dot, .status-ABSENT .dot { background: var(--st-unavail); }
+
+.source-tag { font-size: 10.5px; font-weight: 700; text-transform: uppercase; padding: 2px 6px; border-radius: 4px; background: var(--border); color: var(--text-muted); }
+
+/* ================================================================ */
+/* PAGE 1: ROLE SELECTION / OPENING PAGE                             */
+/* ================================================================ */
+#screen-role-select {
+  min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 40px 20px;
+  background: radial-gradient(circle at 50% 0%, rgba(37,99,235,0.08) 0%, transparent 60%),
+              radial-gradient(circle at 10% 90%, rgba(124,58,237,0.05) 0%, transparent 50%),
+              var(--bg);
+}
+.role-hero { text-align: center; max-width: 720px; margin-bottom: 40px; }
+.hero-logo-badge {
+  display: inline-flex; align-items: center; gap: 10px; background: var(--bg-card);
+  padding: 8px 18px; border-radius: 9999px; border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm); margin-bottom: 20px;
+}
+.hero-logo-badge .icon-box {
+  width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, #2563eb, #7c3aed);
+  display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px;
+}
+.hero-logo-badge .app-title { font-size: 16px; font-weight: 800; letter-spacing: -0.3px; }
+.hero-tagline { font-size: 14px; color: var(--text-muted); font-weight: 600; margin-bottom: 12px; }
+.role-hero h1 { font-size: 38px; font-weight: 800; letter-spacing: -0.8px; color: var(--text-main); margin-bottom: 10px; line-height: 1.2; }
+.role-hero p.subheading { font-size: 18px; color: var(--text-muted); }
+
+.role-cards-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+  width: 100%; max-width: 1060px; margin-bottom: 36px;
+}
+@media (max-width: 860px) {
+  .role-cards-grid { grid-template-columns: 1fr; max-width: 440px; }
+}
+
+.role-card {
+  background: var(--bg-card); border-radius: var(--radius-lg); border: 2px solid var(--border);
+  padding: 36px 28px; display: flex; flex-direction: column; align-items: center; text-align: center;
+  box-shadow: var(--shadow-md); transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative; overflow: hidden;
+}
+.role-card:hover {
+  transform: translateY(-5px); box-shadow: var(--shadow-xl); border-color: var(--primary);
+}
+.role-card-student:hover { border-color: var(--role-student); }
+.role-card-faculty:hover { border-color: var(--role-faculty); }
+.role-card-admin:hover { border-color: var(--role-admin); }
+
+.role-icon-wrapper {
+  width: 76px; height: 76px; border-radius: 22px; display: flex; align-items: center; justify-content: center;
+  font-size: 36px; margin-bottom: 22px; transition: transform 0.2s ease;
+}
+.role-card:hover .role-icon-wrapper { transform: scale(1.08); }
+.role-card-student .role-icon-wrapper { background: var(--role-student-bg); color: var(--role-student); }
+.role-card-faculty .role-icon-wrapper { background: var(--role-faculty-bg); color: var(--role-faculty); }
+.role-card-admin .role-icon-wrapper { background: var(--role-admin-bg); color: var(--role-admin); }
+
+.role-card h2 { font-size: 20px; font-weight: 800; letter-spacing: 0.5px; margin-bottom: 10px; }
+.role-card p { font-size: 14.5px; color: var(--text-muted); line-height: 1.5; margin-bottom: 28px; flex-grow: 1; }
+
+.role-footer-note {
+  display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--text-dim);
+}
+
+/* ================================================================ */
+/* PAGE 2: ROLE-SPECIFIC LOGIN PAGE                                 */
+/* ================================================================ */
+#screen-role-login {
+  min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 40px 20px;
+}
+.login-box {
+  width: 100%; max-width: 440px; background: var(--bg-card); border-radius: var(--radius-xl);
+  border: 1px solid var(--border); box-shadow: var(--shadow-xl); padding: 36px 32px;
+}
+.back-role-btn {
+  display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 600;
+  color: var(--text-muted); margin-bottom: 20px; transition: color 0.15s;
+}
+.back-role-btn:hover { color: var(--text-main); }
+.login-header { margin-bottom: 26px; }
+.login-header h2 { font-size: 24px; font-weight: 800; letter-spacing: -0.3px; margin-bottom: 6px; }
+.login-header p { font-size: 14px; color: var(--text-muted); }
+
+.demo-autofill-box {
+  margin-top: 22px; padding: 14px; border-radius: var(--radius-sm); background: var(--bg-card-alt);
+  border: 1px dashed var(--border); font-size: 12.5px; color: var(--text-muted);
+}
+.demo-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.demo-chip {
+  padding: 4px 9px; background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 6px; font-weight: 600; font-size: 11.5px; cursor: pointer; transition: all 0.15s;
+}
+.demo-chip:hover { border-color: var(--primary); color: var(--primary); }
+
+/* ================================================================ */
+/* PAGE 3: MAIN APPLICATION SHELL & DASHBOARDS                      */
+/* ================================================================ */
+#screen-app { min-height: 100vh; display: flex; flex-direction: column; }
+
+/* Top Navbar */
+.app-navbar {
+  position: sticky; top: 0; z-index: 50; background: var(--bg-card); border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-sm); backdrop-filter: blur(10px);
+}
+.nav-inner {
+  max-width: 1280px; margin: 0 auto; padding: 0 20px; height: 68px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+}
+.nav-brand { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+.nav-logo-icon {
+  width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(135deg, #2563eb, #7c3aed);
+  display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; font-weight: 800;
+}
+.nav-brand-text h1 { font-size: 18px; font-weight: 800; letter-spacing: -0.3px; line-height: 1.1; }
+.nav-brand-text p { font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+.nav-actions { display: flex; align-items: center; gap: 12px; }
+.user-badge-pill {
+  display: flex; align-items: center; gap: 10px; padding: 6px 14px 6px 10px;
+  background: var(--bg-card-alt); border: 1px solid var(--border); border-radius: 9999px; font-size: 13.5px; font-weight: 600;
+}
+.user-role-tag {
+  font-size: 11px; font-weight: 800; text-transform: uppercase; padding: 3px 8px; border-radius: 9999px;
+}
+.user-role-tag.student { background: var(--role-student-bg); color: var(--role-student); }
+.user-role-tag.faculty { background: var(--role-faculty-bg); color: var(--role-faculty); }
+.user-role-tag.admin { background: var(--role-admin-bg); color: var(--role-admin); }
+
+.theme-toggle-btn {
+  width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center; font-size: 17px; background: var(--bg-card);
+  transition: all 0.15s;
+}
+.theme-toggle-btn:hover { background: var(--bg-card-alt); border-color: var(--text-dim); }
+
+/* Navigation Sub-Bar (Tabs) */
+.sub-nav {
+  background: var(--bg-card); border-bottom: 1px solid var(--border);
+}
+.sub-nav-inner {
+  max-width: 1280px; margin: 0 auto; padding: 0 20px; display: flex; gap: 4px; overflow-x: auto;
+}
+.nav-tab-btn {
+  padding: 13px 16px; font-size: 14px; font-weight: 600; color: var(--text-muted);
+  border-bottom: 3px solid transparent; display: flex; align-items: center; gap: 8px;
+  white-space: nowrap; transition: all 0.15s;
+}
+.nav-tab-btn:hover { color: var(--text-main); }
+.nav-tab-btn.active {
+  color: var(--primary); border-bottom-color: var(--primary);
+}
+
+/* Main Content Wrapper */
+.app-main-content {
+  flex: 1; max-width: 1280px; width: 100%; margin: 0 auto; padding: 28px 20px 60px;
+}
+
+/* ======================== DASHBOARD CARDS & STATS ======================== */
+.dashboard-header { margin-bottom: 28px; }
+.dashboard-header h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 6px; }
+.dashboard-header p { font-size: 15px; color: var(--text-muted); }
+
+.stats-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; margin-bottom: 28px;
+}
+.stat-card {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md);
+  padding: 20px; box-shadow: var(--shadow-sm); transition: transform 0.15s, box-shadow 0.15s;
+}
+.stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.stat-card .stat-label { font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; }
+.stat-card .stat-value { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; color: var(--text-main); }
+.stat-card .stat-sub { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
+
+/* Large Search Bar for Student */
+.hero-search-box {
+  background: var(--bg-card); border: 2px solid var(--border); border-radius: var(--radius-lg);
+  padding: 8px 12px 8px 20px; display: flex; align-items: center; gap: 12px;
+  box-shadow: var(--shadow-md); margin-bottom: 24px; transition: border-color 0.15s, box-shadow 0.15s;
+}
+.hero-search-box:focus-within {
+  border-color: var(--primary); box-shadow: 0 0 0 4px rgba(37,99,235,0.12);
+}
+.hero-search-box input {
+  flex: 1; border: none; background: transparent; font-size: 16px; outline: none;
+}
+.hero-search-box .search-icon { font-size: 20px; color: var(--text-muted); }
+
+/* Quick Action Cards Grid */
+.quick-cards-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 32px;
+}
+.action-card {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md);
+  padding: 22px; cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow-sm);
+  display: flex; flex-direction: column; justify-content: space-between; min-height: 130px;
+}
+.action-card:hover {
+  border-color: var(--primary); transform: translateY(-3px); box-shadow: var(--shadow-lg);
+}
+.action-card .card-icon {
+  width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+  font-size: 20px; margin-bottom: 12px; background: var(--primary-light); color: var(--primary);
+}
+.action-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+.action-card p { font-size: 13px; color: var(--text-muted); }
+
+/* Section Title */
+.section-head {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px;
+}
+.section-head h2 { font-size: 20px; font-weight: 800; letter-spacing: -0.3px; }
+.section-head a, .section-head button { font-size: 13.5px; font-weight: 600; color: var(--primary); }
+
+/* Faculty Cards Grid */
+.faculty-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 18px;
+}
+.fac-card {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md);
+  padding: 22px; box-shadow: var(--shadow-sm); transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex; flex-direction: column; justify-content: space-between;
+}
+.fac-card:hover {
+  transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: var(--primary);
+}
+.fac-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.fac-avatar {
+  width: 48px; height: 48px; border-radius: 14px; background: linear-gradient(135deg, #2563eb, #38bdf8);
+  display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; font-weight: 800;
+  flex-shrink: 0;
+}
+.fac-info h3 { font-size: 16.5px; font-weight: 800; margin-bottom: 3px; }
+.fac-info p.dept { font-size: 12.5px; color: var(--text-muted); font-weight: 600; }
+.fac-info p.desig { font-size: 12px; color: var(--text-dim); }
+
+.fac-status-box {
+  background: var(--bg-card-alt); border-radius: var(--radius-sm); padding: 12px 14px;
+  margin: 14px 0; border: 1px solid var(--border-light);
+}
+.fac-location-line { display: flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 600; margin-bottom: 4px; }
+.fac-activity-line { font-size: 12.5px; color: var(--text-muted); }
+.fac-next-avail { font-size: 12px; font-weight: 700; color: var(--st-avail-text); margin-top: 6px; display: flex; align-items: center; gap: 4px; }
+
+.fac-card-bottom {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 8px;
+  padding-top: 14px; border-top: 1px solid var(--border-light);
+}
+
+/* ======================== FILTERS & CONTROLS ======================== */
+.filter-bar {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md);
+  padding: 16px 18px; margin-bottom: 24px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+}
+.filter-group { display: flex; align-items: center; gap: 8px; font-size: 13.5px; }
+.filter-group label { font-weight: 600; color: var(--text-muted); font-size: 12.5px; }
+.filter-select {
+  padding: 7px 12px; border-radius: var(--radius-sm); border: 1.5px solid var(--border);
+  background: var(--bg-card); font-size: 13.5px; font-weight: 600; color: var(--text-main);
+}
+.filter-select:focus { outline: none; border-color: var(--primary); }
+
+/* ======================== TABLES (ADMIN & LISTS) ======================== */
+.table-container {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm); overflow-x: auto;
+}
+.data-table {
+  width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;
+}
+.data-table th {
+  background: var(--bg-card-alt); padding: 14px 18px; font-weight: 700; font-size: 12.5px;
+  color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border);
+}
+.data-table td {
+  padding: 16px 18px; border-bottom: 1px solid var(--border-light); color: var(--text-main); vertical-align: middle;
+}
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: var(--bg-card-alt); }
+
+/* ======================== MODAL STYLING ======================== */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 100; background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center;
+  padding: 20px; opacity: 1; transition: opacity 0.2s;
+}
+.modal-window {
+  background: var(--bg-card); border-radius: var(--radius-xl); border: 1px solid var(--border);
+  box-shadow: var(--shadow-xl); width: 100%; max-width: 620px; max-height: 90vh;
+  overflow-y: auto; display: flex; flex-direction: column;
+}
+.modal-window.wide { max-width: 860px; }
+.modal-header {
+  padding: 24px 28px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between;
+}
+.modal-header h2 { font-size: 20px; font-weight: 800; letter-spacing: -0.3px; }
+.modal-close-btn {
+  width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 18px; color: var(--text-muted); background: var(--bg-card-alt); transition: all 0.15s;
+}
+.modal-close-btn:hover { background: var(--border); color: var(--text-main); }
+.modal-body { padding: 28px; }
+.modal-footer {
+  padding: 18px 28px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: flex-end; gap: 12px;
+  background: var(--bg-card-alt); border-bottom-left-radius: var(--radius-xl); border-bottom-right-radius: var(--radius-xl);
+}
+
+/* ======================== TIMELINE / SCHEDULE UI ======================== */
+.schedule-timeline { display: flex; flex-direction: column; gap: 12px; }
+.timeline-slot {
+  display: flex; gap: 16px; padding: 14px 18px; border-radius: var(--radius-md);
+  border: 1px solid var(--border); background: var(--bg-card); transition: all 0.15s;
+}
+.timeline-slot.is-now { border-color: var(--primary); background: var(--primary-light); }
+.timeline-slot.is-free { background: var(--st-avail-bg); border-color: rgba(16,185,129,0.3); }
+.timeline-time { font-size: 13.5px; font-weight: 800; min-width: 130px; }
+.timeline-desc { flex: 1; }
+.timeline-desc .subj { font-weight: 700; font-size: 14.5px; }
+.timeline-desc .venue { font-size: 12.5px; color: var(--text-muted); margin-top: 2px; }
+
+/* ======================== FEEDBACK FORM & CHARTS ======================== */
+.feedback-card {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 32px; box-shadow: var(--shadow-md); max-width: 760px; margin: 0 auto;
+}
+.fb-question { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--border-light); }
+.fb-question:last-child { border-bottom: none; }
+.fb-question h4 { font-size: 15.5px; font-weight: 700; margin-bottom: 12px; }
+.fb-options { display: flex; flex-wrap: wrap; gap: 10px; }
+.fb-opt-label {
+  display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px;
+  border-radius: var(--radius-sm); border: 1.5px solid var(--border); background: var(--bg-card);
+  font-size: 13.5px; font-weight: 600; cursor: pointer; transition: all 0.15s;
+}
+.fb-opt-label:has(input:checked) {
+  border-color: var(--primary); background: var(--primary-light); color: var(--primary-text);
+}
+.rating-stars { display: flex; gap: 8px; font-size: 28px; cursor: pointer; }
+.rating-star { color: var(--border); transition: color 0.15s; }
+.rating-star.active { color: #f59e0b; }
+
+/* Progress Bar Chart */
+.chart-bar-row { margin-bottom: 14px; }
+.chart-bar-header { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+.chart-bar-track { height: 10px; border-radius: 9999px; background: var(--bg-card-alt); border: 1px solid var(--border); overflow: hidden; }
+.chart-bar-fill { height: 100%; border-radius: 9999px; background: linear-gradient(90deg, #2563eb, #7c3aed); transition: width 0.5s ease; }
+
+/* ======================== TOAST NOTIFICATIONS ======================== */
+#toast-container {
+  position: fixed; bottom: 24px; right: 24px; z-index: 200; display: flex; flex-direction: column; gap: 8px;
+}
+.toast {
+  background: #0f172a; color: #ffffff; padding: 12px 20px; border-radius: var(--radius-md);
+  font-size: 14px; font-weight: 600; box-shadow: var(--shadow-xl); display: flex; align-items: center; gap: 10px;
+  animation: slideIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+[data-theme="dark"] .toast { background: #ffffff; color: #0f172a; }
+@keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+/* ======================== CAMPUS MAP VISUALIZER ======================== */
+.campus-map-box {
+  background: var(--bg-card-alt); border: 1px solid var(--border); border-radius: var(--radius-md);
+  padding: 20px; margin: 16px 0; text-align: center;
+}
+.building-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px;
+}
+.building-tile {
+  background: var(--bg-card); border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  padding: 12px 8px; font-size: 12.5px; font-weight: 700; transition: all 0.2s;
+}
+.building-tile.highlight {
+  border-color: var(--primary); background: var(--primary-light); color: var(--primary-text);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.2); transform: scale(1.03);
+}
+.directions-step {
+  display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; font-size: 13.5px;
+}
+.step-num {
+  width: 24px; height: 24px; border-radius: 50%; background: var(--primary); color: #fff;
+  display: flex; align-items: center; justify-content: center; font-size: 11.5px; font-weight: 800; flex-shrink: 0;
+}
+</style>
+</head>
+<body>
+
+<!-- ================================================================ -->
+<!-- PAGE 1: ROLE SELECTION / OPENING PAGE                             -->
+<!-- ================================================================ -->
+<section id="screen-role-select">
+  <div class="role-hero">
+    <div class="hero-logo-badge">
+      <div class="icon-box">🎓</div>
+      <div class="app-title">FindMyFaculty</div>
+      <button class="theme-toggle-btn" id="theme-btn-role" title="Toggle theme" style="width:28px;height:28px;font-size:13px;margin-left:6px">🌙</button>
+    </div>
+    <div class="hero-tagline">“Find your faculty. Save your time.”</div>
+    <h1>Welcome to FindMyFaculty</h1>
+    <p class="subheading">“Choose how you want to continue.”</p>
+  </div>
+
+  <div class="role-cards-grid">
+    <!-- STUDENT CARD -->
+    <div class="role-card role-card-student">
+      <div class="role-icon-wrapper">👨‍🎓</div>
+      <h2>STUDENT</h2>
+      <p>Find faculty, check availability and view timetables.</p>
+      <button class="btn btn-student btn-lg btn-block" id="btn-continue-student">
+        Continue as Student →
+      </button>
+      <button class="btn btn-secondary btn-sm btn-block" id="btn-quick-student" style="margin-top:10px;font-size:12px;font-weight:700">
+        ⚡ 1-Click Demo Login (Sandeep)
+      </button>
+    </div>
+
+    <!-- FACULTY CARD -->
+    <div class="role-card role-card-faculty">
+      <div class="role-icon-wrapper">👨‍🏫</div>
+      <h2>FACULTY</h2>
+      <p>Manage your availability, timetable and current location.</p>
+      <button class="btn btn-faculty btn-lg btn-block" id="btn-continue-faculty">
+        Continue as Faculty →
+      </button>
+      <button class="btn btn-secondary btn-sm btn-block" id="btn-quick-faculty" style="margin-top:10px;font-size:12px;font-weight:700">
+        ⚡ 1-Click Demo Login (Dr. Ravi Kumar)
+      </button>
+    </div>
+
+    <!-- ADMIN CARD -->
+    <div class="role-card role-card-admin">
+      <div class="role-icon-wrapper">🛡️</div>
+      <h2>ADMIN</h2>
+      <p>Manage faculty, timetables, departments and system information.</p>
+      <button class="btn btn-admin btn-lg btn-block" id="btn-continue-admin">
+        Continue as Admin →
+      </button>
+      <button class="btn btn-secondary btn-sm btn-block" id="btn-quick-admin" style="margin-top:10px;font-size:12px;font-weight:700">
+        ⚡ 1-Click Demo Login (Admin)
+      </button>
+    </div>
+  </div>
+
+  <div class="role-footer-note">
+    <span>🔒 Secure role-based access</span>
+    <span>·</span>
+    <span id="role-server-stat" style="color:var(--st-avail)">server ok ✓</span>
+  </div>
+</section>
+
+
+<!-- ================================================================ -->
+<!-- PAGE 2: ROLE-SPECIFIC LOGIN PAGE                                 -->
+<!-- ================================================================ -->
+<section id="screen-role-login" class="hide">
+  <div class="login-box">
+    <button class="back-role-btn" id="btn-back-to-roles">
+      ← Back to role selection
+    </button>
+    
+    <div class="login-header">
+      <h2 id="login-role-title">Student Login</h2>
+      <p id="login-role-subtitle">Find faculty, check availability and view timetables.</p>
+    </div>
+
+    <form id="login-form" onsubmit="return false;">
+      <div class="input-group">
+        <label class="input-label" id="login-id-label">Student ID / Email</label>
+        <input type="text" class="input-field" id="login-username" placeholder="e.g. 21CSE042 or sandeep" autocomplete="username" required>
+      </div>
+
+      <div class="input-group">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <label class="input-label" style="margin-bottom:0">Password</label>
+          <a href="#" id="btn-forgot-pw" style="font-size:12.5px;font-weight:600">Forgot Password?</a>
+        </div>
+        <input type="password" class="input-field" id="login-password" placeholder="••••••••" autocomplete="current-password" required>
+      </div>
+
+      <div id="login-error-msg" style="color:var(--st-unavail);font-size:13px;font-weight:600;margin-bottom:14px;min-height:18px"></div>
+
+      <button type="submit" class="btn btn-primary btn-lg btn-block" id="btn-submit-login">
+        Login as Student
+      </button>
+    </form>
+
+    <div class="demo-autofill-box">
+      <div style="font-weight:700;color:var(--text-main);margin-bottom:4px">⚡ Demo Quick Login:</div>
+      <div id="demo-chips-container" class="demo-chips">
+        <!-- populated dynamically per role -->
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ================================================================ -->
+<!-- PAGE 3: MAIN APP SHELL & ROLE DASHBOARDS                         -->
+<!-- ================================================================ -->
+<section id="screen-app" class="hide">
+  <!-- Top App Navbar -->
+  <header class="app-navbar">
+    <div class="nav-inner">
+      <div class="nav-brand" id="nav-brand-btn">
+        <div class="nav-logo-icon">🎓</div>
+        <div class="nav-brand-text">
+          <h1>FindMyFaculty</h1>
+          <p>SCSVMV University · CSE</p>
+        </div>
+      </div>
+
+      <div class="nav-actions">
+        <div class="user-badge-pill">
+          <span class="user-role-tag" id="nav-user-role">Student</span>
+          <span id="nav-user-name">Sandeep Kumar</span>
+        </div>
+
+        <button class="theme-toggle-btn" id="theme-btn-app" title="Toggle theme">🌙</button>
+        <button class="btn btn-secondary btn-sm" id="btn-logout" title="Sign out">
+          Sign Out ⎋
+        </button>
+      </div>
+    </div>
+
+    <!-- Role-Specific Navigation Sub-Bar -->
+    <nav class="sub-nav">
+      <div class="sub-nav-inner" id="app-nav-tabs">
+        <!-- Dynamically injected tabs based on role -->
+      </div>
+    </nav>
+  </header>
+
+  <!-- Main View Container -->
+  <main class="app-main-content" id="app-view-container">
+    <!-- View content loaded dynamically -->
+  </main>
+</section>
+
+
+<!-- ================================================================ -->
+<!-- MODALS CONTAINER                                                 -->
+<!-- ================================================================ -->
+<div id="modal-container" class="hide"></div>
+
+<!-- TOAST CONTAINER -->
+<div id="toast-container"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
